@@ -29,7 +29,7 @@ class HTMLSplitter
 			'p' => array('margin-bottom' => 1),
 		);
 		$this->headers = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
-		$this->splittable = array('div', 'p', 'ul');
+		$this->splittable = array('div', 'p', 'ul', 'ol');
 		$this->break = array('br');
 	}
 
@@ -70,6 +70,8 @@ class HTMLSplitter
 			{
 				$current_tag = $node->name;
 
+				$item = 1;
+				$start = 1;
 				$children = array();
 				foreach ($node->children as $childNode)
 				{
@@ -85,7 +87,8 @@ class HTMLSplitter
 					if ($height >= $colHeight)
 					{
 						// construct node
-						$nodeText = $this->constructStartTag($node) . implode('', $children) . '</' . $current_tag . '>';
+						$nodeText = $this->constructStartTag($node, $start) . implode('', $children) . '</' . $current_tag . '>';
+						$start = $item + 1;
 						$cols[$column][] = $nodeText;
 						$children = array();
 
@@ -97,13 +100,18 @@ class HTMLSplitter
 							$height = 0;
 						}
 					}
+
+					if ($childNode->name == 'li')
+					{
+						$item++;
+					}
 				}
 
 				// if we have untouched children
 				if (count($children) > 0)
 				{
 					// construct node
-					$nodeText = $this->constructStartTag($node) . implode('', $children) . '</' . $current_tag . '>';
+					$nodeText = $this->constructStartTag($node, $start) . implode('', $children) . '</' . $current_tag . '>';
 					$cols[$column][] = $nodeText;
 
 					if ($height >= $colHeight && $column < $columns - 1)
@@ -146,14 +154,19 @@ class HTMLSplitter
 	 * @param type $node
 	 * @return string
 	 */
-	protected function constructStartTag($node)
+	protected function constructStartTag($node, $start = '')
 	{
 		$ret = '<';
 		$ret .= $node->name;
 
-		if ($node->node->hasAttributes())
+		if ($node->node->hasAttributes() || $node->name == 'ol')
 		{
 			$attributes = array();
+
+			if ($node->name == 'ol')
+			{
+				$attributes[] = 'start="' . $start . '"';
+			}
 
 			$length = $node->node->attributes->length;
 			for ($i = 0; $i < $length; $i++)

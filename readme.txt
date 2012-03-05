@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
 Requires at least: 3.1.0
 Tested up to: 3.3.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 Wrap block of text with shortcode. It will be split into columns. Automagically.
 
@@ -18,7 +18,6 @@ I needed automated, tag-aware column splitter for one of my projects. So I have 
 *	tag-aware;
 *	splits long paragraphs and unordered lists;
 *	keeps text with headers;
-*	does not split ordered lists to keep right order.
 
 Wrap block of text with `[auto_columns]...[/auto_columns]` shortcode. It will produce markup like
 
@@ -52,7 +51,10 @@ No questions yet
 
 == Changelog ==
 
-= 1.0 =
+= 1.0.1 =
+* Fixed `<ol>` behavior
+
+= 1.0.0 =
 * First public release
 
 == Upgrade Notice ==
