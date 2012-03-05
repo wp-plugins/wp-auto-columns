@@ -1,3 +1,7 @@
 .auto-columns-column {
 	float: left;
 }
+
+.auto-columns-clear {
+	clear: left;
+}

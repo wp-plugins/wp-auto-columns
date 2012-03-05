@@ -109,7 +109,7 @@ class WPAutoColumns
 			$ret .= '</div>';
 		}
 
-		$ret .= '<div class="clear"></div>';
+		$ret .= '<div class="auto-columns-clear"></div>';
 		$ret .= '</div>';
 
 		return $ret;

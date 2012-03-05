@@ -90,9 +90,12 @@ class HTMLSplitter
 						$children = array();
 
 						// next column
-						$column++;
-						$cols[$column] = array();
-						$height = 0;
+						if ($column < $columns - 1)
+						{
+							$column++;
+							$cols[$column] = array();
+							$height = 0;
+						}
 					}
 				}
 
@@ -103,7 +106,7 @@ class HTMLSplitter
 					$nodeText = $this->constructStartTag($node) . implode('', $children) . '</' . $current_tag . '>';
 					$cols[$column][] = $nodeText;
 
-					if ($height >= $colHeight)
+					if ($height >= $colHeight && $column < $columns - 1)
 					{
 						// next column
 						$column++;
