@@ -1,4 +1,4 @@
-=== WP Nice Slug ===
+=== WP Auto Columns ===
 Contributors: spectraweb
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z5XN794FWSSZW
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
