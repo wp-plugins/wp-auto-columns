@@ -3,10 +3,10 @@
 /*
   Plugin Name: WP Auto Columns
   Plugin URI: http://wordpress.org/extend/plugins/wp-auto-columns/
-  Description: @todo provide description
+  Description: Wrap block of text with shortcode. It will be split into columns. Automagically.
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.0
+  Version: 1.0.1
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
