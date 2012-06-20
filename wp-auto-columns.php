@@ -6,7 +6,7 @@
   Description: Wrap block of text with shortcode. It will be split into columns. Automagically. NOTE: Tags with unknown vertical size are removed!
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.2
+  Version: 1.0.3
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -18,6 +18,11 @@ add_filter('init', array('WPAutoColumns', 'on_init'));
 
 require_once('include/HTMLSplitter.php');
 
+/**
+ *
+ * @todo Size modifiers settings
+ *
+ */
 class WPAutoColumns
 {
 
@@ -27,9 +32,14 @@ class WPAutoColumns
 	public static function on_activation()
 	{
 		// check plugin requirements
-		if (class_exists('DOMDocument'))
+		if (!class_exists('tidy'))
 		{
-			WPAutoColumns::trigger_error(__('This plugin requires DOM API (<a href="http://www.php.net/manual/en/dom.setup.php" target="_blank">more info</a>)', 'wp-auto-columns'), E_USER_ERROR);
+			WPAutoColumns::trigger_error(__('This plugin requires Tidy (<a href="http://www.php.net/manual/en/book.tidy.php" target="_blank">more info</a>)', 'wp-auto-columns'), E_USER_ERROR);
+		}
+
+		if (!class_exists('DOMDocument'))
+		{
+			WPAutoColumns::trigger_error(__('This plugin requires DOM API (<a href="http://www.php.net/manual/en/book.dom.php" target="_blank">more info</a>)', 'wp-auto-columns'), E_USER_ERROR);
 		}
 	}
 
@@ -88,6 +98,12 @@ class WPAutoColumns
 
 		$col_array = $splitter->split($content, $columns);
 
+		if (!is_array($col_array))
+		{
+			// could not split
+			return $content;
+		}
+
 		// construct container
 		$class = array('auto-columns-container', 'columns-' . $columns);
 		$ret = '<div class="' . implode(' ', $class) . '">';
@@ -127,6 +143,11 @@ class WPAutoColumns
 		echo 'settings';
 	}
 
+	/**
+	 *
+	 * @param type $message
+	 * @param type $errno
+	 */
 	public static function trigger_error($message, $errno)
 	{
 		if (isset($_GET['action']) && $_GET['action'] == 'error_scrape')

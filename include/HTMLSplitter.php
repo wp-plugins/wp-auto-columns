@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *
+ * @todo check attributes of IMG tag
+ * 
+ */
 class HTMLSplitter
 {
 
@@ -56,13 +61,17 @@ class HTMLSplitter
 	public function split($html, $columns = 2)
 	{
 		// clean up the html
-		$text = strip_tags($text, '<p><a><b><i><u><strong><em><br><h1><h2><h3><h4><h5><h6><ul><ol><li><dt><dd><dl><hr><span>');
+		$html = strip_tags($html, '<p><a><b><i><u><strong><em><br><h1><h2><h3><h4><h5><h6><ul><ol><li><dt><dd><dl><hr><span>');
 
-		//
+		// repair html and fix tags
+		$tidy = new tidy();
+		$html = $tidy->repairString($html);
+
+		// parse
 		$doc = new DOMDocument();
+		$doc->loadHTML($html);
 
-		$doc->loadHTML('<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $html . '</body></html>');
-
+		// process
 		$nodeArray = $this->processNode($doc);
 
 		// calculate
