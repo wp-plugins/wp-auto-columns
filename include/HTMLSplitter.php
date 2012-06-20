@@ -15,8 +15,10 @@ class HTMLSplitter
 	 */
 	public function __construct()
 	{
+		// skip tags
 		$this->skip = array('head');
 		$this->pass = array('#document', 'html', 'body');
+		// size modifiers
 		$this->modifiers = array(
 			'#default' => array('line-count' => 60, 'line-height' => 1, 'margin-bottom' => 0),
 			'h1' => array('line-count' => 20, 'line-height' => 2.5, 'margin-bottom' => 1),
@@ -28,8 +30,11 @@ class HTMLSplitter
 			'ol' => array('margin-bottom' => 1),
 			'p' => array('margin-bottom' => 1),
 		);
+		// header tags
 		$this->headers = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
+		// splittable tags
 		$this->splittable = array('div', 'p', 'ul', 'ol');
+		// line break tags
 		$this->break = array('br');
 	}
 
@@ -42,10 +47,18 @@ class HTMLSplitter
 	}
 
 	/**
+	 * Split document into columns
 	 *
+	 * @param $html
+	 * @param $columns
+	 * @return array of columns
 	 */
 	public function split($html, $columns = 2)
 	{
+		// clean up the html
+		$text = strip_tags($text, '<p><a><b><i><u><strong><em><br><h1><h2><h3><h4><h5><h6><ul><ol><li><dt><dd><dl><hr><span>');
+
+		//
 		$doc = new DOMDocument();
 
 		$doc->loadHTML('<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $html . '</body></html>');

@@ -3,10 +3,10 @@
 /*
   Plugin Name: WP Auto Columns
   Plugin URI: http://wordpress.org/extend/plugins/wp-auto-columns/
-  Description: Wrap block of text with shortcode. It will be split into columns. Automagically.
+  Description: Wrap block of text with shortcode. It will be split into columns. Automagically. NOTE: Tags with unknown vertical size are removed!
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.1
+  Version: 1.0.2
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -26,7 +26,11 @@ class WPAutoColumns
 	 */
 	public static function on_activation()
 	{
-
+		// check plugin requirements
+		if (class_exists('DOMDocument'))
+		{
+			WPAutoColumns::trigger_error(__('This plugin requires DOM API (<a href="http://www.php.net/manual/en/dom.setup.php" target="_blank">more info</a>)', 'wp-auto-columns'), E_USER_ERROR);
+		}
 	}
 
 	/**
@@ -121,6 +125,19 @@ class WPAutoColumns
 	public static function on_settings()
 	{
 		echo 'settings';
+	}
+
+	public static function trigger_error($message, $errno)
+	{
+		if (isset($_GET['action']) && $_GET['action'] == 'error_scrape')
+		{
+			echo '<strong>' . $message . '</strong>';
+			exit;
+		}
+		else
+		{
+			trigger_error($message, $errno);
+		}
 	}
 
 }

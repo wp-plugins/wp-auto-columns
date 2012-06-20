@@ -4,9 +4,11 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
 Requires at least: 3.1.0
 Tested up to: 3.3.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 Wrap block of text with shortcode. It will be split into columns. Automagically.
+
+NOTE: IMG tags are removed from the text
 
 == Description ==
 
@@ -50,6 +52,11 @@ No questions yet
 2. Example of shortcode markup
 
 == Changelog ==
+
+= 1.0.2 =
+* IMG tags are filtered
+* Added check for installed DOM API on activation
+* Added Russian translation
 
 = 1.0.1 =
 * Fixed `<ol>` behavior
