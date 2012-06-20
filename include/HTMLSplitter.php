@@ -3,7 +3,7 @@
 /**
  *
  * @todo check attributes of IMG tag
- * 
+ *
  */
 class HTMLSplitter
 {
@@ -65,11 +65,20 @@ class HTMLSplitter
 
 		// repair html and fix tags
 		$tidy = new tidy();
-		$html = $tidy->repairString($html);
+
+		//
+		$config = array(
+			'indent' => false,
+			'output-xhtml' => true
+		);
+		$tidy->parseString($html, $config, 'UTF8');
+
+		//
+		$tidy->cleanRepair();
 
 		// parse
 		$doc = new DOMDocument();
-		$doc->loadHTML($html);
+		$doc->loadHTML('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head>' . $tidy->body() . '</html>');
 
 		// process
 		$nodeArray = $this->processNode($doc);
