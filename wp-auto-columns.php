@@ -3,18 +3,13 @@
 /*
   Plugin Name: WP Auto Columns
   Plugin URI: http://wordpress.org/extend/plugins/wp-auto-columns/
-  Description: Wrap block of text with shortcode. It will be split into columns. Automagically. NOTE: Tags with unknown vertical size are removed!
+  Description: Wrap block of text with shortcode. It will be split into columns. Automagically.
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.3
+  Version: 1.0.4
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
-
-register_activation_hook(__FILE__, array('WPAutoColumns', 'on_activation'));
-register_deactivation_hook(__FILE__, array('WPAutoColumns', 'on_deactivation'));
-
-add_filter('init', array('WPAutoColumns', 'on_init'));
 
 require_once('include/HTMLSplitter.php');
 
@@ -60,6 +55,16 @@ class WPAutoColumns
 		{
 			add_action('admin_init', array('WPAutoColumns', 'on_admin_init'));
 			add_action('admin_menu', array('WPAutoColumns', 'on_admin_menu'));
+
+			if (current_user_can('edit_posts') || current_user_can('edit_pages'))
+			{
+				// Add only in Rich Editor mode
+				if (get_user_option('rich_editing') == 'true')
+				{
+					add_filter("mce_external_plugins", array('WPAutoColumns', 'tinymce_plugin'));
+					add_filter('mce_buttons', array('WPAutoColumns', 'buttons'));
+				}
+			}
 		}
 		else
 		{
@@ -161,4 +166,48 @@ class WPAutoColumns
 		}
 	}
 
+	/**
+	 * Load the TinyMCE plugin : editor_plugin.js (wp2.5)
+	 *
+	 * @param type $plugin_array
+	 */
+	public static function tinymce_plugin($plugin_array)
+	{
+		$plugin_array['autocolumns'] = plugins_url('tinymce/plugins/editor_plugin.js', __FILE__);
+		return $plugin_array;
+	}
+
+	/**
+	 *
+	 * @param type $buttons
+	 * @return type
+	 */
+	public static function buttons($buttons)
+	{
+		array_push($buttons, 'separator', 'auto-columns');
+		return $buttons;
+	}
+
+	/**
+	 *
+	 */
+	public static function footer_admin()
+	{
+		echo '<script type="text/javascript">' . "\n";
+		readfile(plugin_dir_path(__FILE__) . 'js/footer_admin.js');
+		echo '</script>' . "\n";
+	}
+
 }
+
+// activation hook
+register_activation_hook(__FILE__, array('WPAutoColumns', 'on_activation'));
+// deactivation hook
+register_deactivation_hook(__FILE__, array('WPAutoColumns', 'on_deactivation'));
+
+add_action('init', array('WPAutoColumns', 'on_init'));
+
+add_action('admin_footer-post-new.php', array('WPAutoColumns', 'footer_admin'));
+add_action('admin_footer-post.php', array('WPAutoColumns', 'footer_admin'));
+add_action('admin_footer-page-new.php', array('WPAutoColumns', 'footer_admin'));
+add_action('admin_footer-page.php', array('WPAutoColumns', 'footer_admin'));

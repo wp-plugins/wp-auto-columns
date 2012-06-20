@@ -4,11 +4,9 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
 Requires at least: 3.1.0
 Tested up to: 3.3.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 Wrap block of text with shortcode. It will be split into columns. Automagically.
-
-NOTE: IMG tags are removed from the text
 
 == Description ==
 
@@ -20,6 +18,12 @@ I needed automated, tag-aware column splitter for one of my projects. So I have 
 *	tag-aware;
 *	splits long paragraphs and unordered lists;
 *	keeps text with headers;
+
+= Requirements =
+
+The plugin requires DOM API (http://www.php.net/manual/en/book.dom.php) and Tidy (http://www.php.net/manual/en/book.tidy.php)
+
+= Usage =
 
 Wrap block of text with `[auto_columns]...[/auto_columns]` shortcode. It will produce markup like
 
@@ -52,6 +56,9 @@ No questions yet
 2. Example of shortcode markup
 
 == Changelog ==
+
+= 1.0.4 =
+* Added editor toolbar button
 
 = 1.0.3 =
 * Small fix in activation handler
