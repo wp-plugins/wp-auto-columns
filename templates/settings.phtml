@@ -1,0 +1,112 @@
+<div class="wrap">
+	<h2><?php _e('Auto Columns Settings', 'wp-auto-columns') ?></h2>
+
+	<?php if ($message != '') : ?>
+		<div class="updated fade below-h2">
+			<p><?php echo $message ?></p>
+		</div>
+	<?php endif; ?>
+
+	<form method="post" action="options.php">
+		<?php settings_fields('wp_auto_columns'); ?>
+		<table class="form-table">
+			<tr valign="top">
+				<th scope="row"><?php _e('Line height in pixels', 'wp-auto-columns') ?></th>
+				<td>
+					<input type="text" name="wp_auto_columns_line_height"
+						   class="small-text"
+						   value="<?php echo get_option('wp_auto_columns_line_height', 14); ?>" />
+				</td>
+			</tr>
+
+			<tr valign="top">
+				<th scope="row"><?php _e('Header tags', 'wp-auto-columns') ?></th>
+				<td>
+					<input type="text" name="wp_auto_columns_tags_headers"
+						   class="large-text"
+						   value="<?php echo get_option('wp_auto_columns_tags_headers', 'h1, h2, h3, h4, h5, h6'); ?>" />
+					<p class="description"><?php _e('Comma separated list of header tags', 'wp-auto-columns') ?></p>
+				</td>
+			</tr>
+
+			<tr valign="top">
+				<th scope="row"><?php _e('Splittable tags', 'wp-auto-columns') ?></th>
+				<td>
+					<input type="text" name="wp_auto_columns_tags_splittable"
+						   class="large-text"
+						   value="<?php echo get_option('wp_auto_columns_tags_splittable', 'div, p, ol, ul'); ?>" />
+					<p class="description"><?php _e('Comma separated list of tags allowed to split between columns', 'wp-auto-columns') ?></p>
+				</td>
+			</tr>
+
+			<?php
+			$heights = get_option('wp_auto_columns_height_modifiers');
+			?>
+			<tr valign="top">
+				<th scope="row"><?php _e('Splitter fine tuning', 'wp-auto-columns') ?></th>
+				<td>
+					<table>
+						<thead>
+							<tr>
+								<th></th>
+								<th><?php _e('Chars in line', 'wp-auto-columns') ?></th>
+								<th><?php _e('line-height', 'wp-auto-columns') ?></th>
+								<th><?php _e('margin-bottom', 'wp-auto-columns') ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th><em>default</em></th>
+								<td>
+									<input type="text" name="wp_auto_columns_height_modifiers[default][line-chars]"
+										   class="small-text"
+										   value="<?php echo $heights['default']['line-chars'] ?>" />
+								</td>
+								<td>
+									<input type="text" name="wp_auto_columns_height_modifiers[default][line-height]"
+										   class="small-text"
+										   value="<?php echo $heights['default']['line-height'] ?>" />
+								</td>
+								<td>
+									<input type="text" name="wp_auto_columns_height_modifiers[default][margin-bottom]"
+										   class="small-text"
+										   value="<?php echo $heights['default']['margin-bottom'] ?>" />
+								</td>
+							</tr>
+							<?php
+							$tags = array('p', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'ol', 'ul');
+							?>
+							<?php foreach ($tags as $tag) : ?>
+								<tr>
+									<th><?php echo $tag ?></th>
+									<td>
+										<input type="text" name="wp_auto_columns_height_modifiers[<?php echo $tag ?>][line-chars]"
+											   class="small-text"
+											   value="<?php echo $heights[$tag]['line-chars'] ?>" />
+									</td>
+									<td>
+										<input type="text" name="wp_auto_columns_height_modifiers[<?php echo $tag ?>][line-height]"
+											   class="small-text"
+											   value="<?php echo $heights[$tag]['line-height'] ?>" />
+									</td>
+									<td>
+										<input type="text" name="wp_auto_columns_height_modifiers[<?php echo $tag ?>][margin-bottom]"
+											   class="small-text"
+											   value="<?php echo $heights[$tag]['margin-bottom'] ?>" />
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+					<p class="description"><?php _e('These settings are for real experts. Use on your own risk', 'wp-auto-columns') ?></p>
+				</td>
+			</tr>
+		</table>
+
+		<!-- Submit form -->
+		<p class="submit">
+			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+		</p>
+
+	</form>
+</div>

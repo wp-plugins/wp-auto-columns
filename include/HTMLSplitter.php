@@ -8,47 +8,86 @@
 class HTMLSplitter
 {
 
-	protected $skip;
-	protected $pass;
-	protected $modifiers;
-	protected $headers;
-	protected $splittable;
-	protected $break;
+	// split configuration
+	protected $config;
 
 	/**
 	 *
 	 */
-	public function __construct()
+	public function __construct($config = null)
 	{
-		// skip tags
-		$this->skip = array('head');
-		$this->pass = array('#document', 'html', 'body');
-		// size modifiers
-		$this->modifiers = array(
-			'#default' => array('line-count' => 60, 'line-height' => 1, 'margin-bottom' => 0),
-			'h1' => array('line-count' => 20, 'line-height' => 2.5, 'margin-bottom' => 1),
-			'h2' => array('line-count' => 25, 'line-height' => 2, 'margin-bottom' => 1),
-			'h3' => array('line-count' => 40, 'line-height' => 1.5, 'margin-bottom' => 1),
-			'br' => array('margin-bottom' => 1),
-			'hr' => array('margin-bottom' => 1),
-			'ul' => array('margin-bottom' => 1),
-			'ol' => array('margin-bottom' => 1),
-			'p' => array('margin-bottom' => 1),
+		// default configuration values
+		$this->config = array(
+			// line height in pixels
+			'line_height' => 14,
+			// skip tags
+			'skip' => array('head'),
+			// pass tags as is
+			'pass' => array('#document', 'html', 'body'),
+			// header tags
+			'headers' => array(),
+			// splittable tags
+			'splittable' => array(),
+			// inline tags
+			'inline' => array('span', 'a', 'b', 'strong', 'i', 'em'),
+			// line break tags
+			'break' => array('br'),
+			// size modifiers
+			'modifiers' => array(
+				'default' => array('line-chars' => 50, 'line-height' => 1, 'margin-bottom' => 0),
+				'h1' => array('line-chars' => 20, 'line-height' => 2.5, 'margin-bottom' => 1),
+				'h2' => array('line-chars' => 25, 'line-height' => 2, 'margin-bottom' => 1),
+				'h3' => array('line-chars' => 40, 'line-height' => 1.5, 'margin-bottom' => 1),
+				'br' => array('line-height' => 0.5, 'margin-bottom' => 1),
+				'hr' => array('margin-bottom' => 1),
+				'ul' => array('margin-bottom' => 1),
+				'ol' => array('margin-bottom' => 1),
+				'p' => array('margin-bottom' => 1),
+			)
 		);
-		// header tags
-		$this->headers = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
-		// splittable tags
-		$this->splittable = array('div', 'p', 'ul', 'ol');
-		// line break tags
-		$this->break = array('br');
+
+		if ($config != null)
+		{
+			$this->setConfig($config);
+		}
+	}
+
+	/**
+	 * Set external modifiers
+	 */
+	public function setConfig($config)
+	{
+		$this->config = $this->array_merge($this->config, $config);
 	}
 
 	/**
 	 *
+	 * @param type $array1
+	 * @param type $array2
+	 * @return
 	 */
-	public function setModifiers($modifiers)
+	private function array_merge()
 	{
-		$this->modifiers = array_merge($this->modifiers, $modifiers);
+		$arrays = func_get_args();
+		$merged = array();
+		while ($arrays)
+		{
+			$array = array_shift($arrays);
+			if (!$array)
+				continue;
+
+			foreach ($array as $key => $value)
+			{
+				if (is_string($key))
+					if (is_array($value) && array_key_exists($key, $merged) && is_array($merged[$key]))
+						$merged[$key] = call_user_func(__FUNCTION__, $merged[$key], $value);
+					else
+						$merged[$key] = $value;
+				else
+					$merged[] = $value;
+			}
+		}
+		return $merged;
 	}
 
 	/**
@@ -60,35 +99,33 @@ class HTMLSplitter
 	 */
 	public function split($html, $columns = 2)
 	{
-		// clean up the html
-		$html = strip_tags($html, '<p><a><b><i><u><strong><em><br><h1><h2><h3><h4><h5><h6><ul><ol><li><dt><dd><dl><hr><span>');
-
 		// repair html and fix tags
 		$tidy = new tidy();
 
-		//
+		// tidy config
 		$config = array(
 			'indent' => false,
 			'output-xhtml' => true
 		);
 		$tidy->parseString($html, $config, 'UTF8');
 
-		//
+		// clean and repair source html
 		$tidy->cleanRepair();
 
-		// parse
+		// parse html
 		$doc = new DOMDocument();
 		$doc->loadHTML('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head>' . $tidy->body() . '</html>');
 
-		// process
+		// process html
 		$nodeArray = $this->processNode($doc);
 
-		// calculate
-		$totalHeight = $this->calculateHeight($nodeArray, $this->modifiers['#default']);
+		// calculate estimated height of whole html
+		$totalHeight = $this->calculateHeight($nodeArray, $this->config['modifiers']['default']);
 
+		// calculate column height
 		$colHeight = floor($totalHeight / $columns);
 
-		//
+		// array of columns
 		$cols = array();
 
 		$column = 0;
@@ -97,7 +134,7 @@ class HTMLSplitter
 		{
 			$node = array_shift($nodeArray);
 
-			if (in_array($node->name, $this->splittable))
+			if (in_array($node->name, $this->config['splittable']))
 			{
 				$current_tag = $node->name;
 
@@ -107,7 +144,7 @@ class HTMLSplitter
 				foreach ($node->children as $childNode)
 				{
 					// skip break tags in the beginning of the column
-					if (in_array($childNode->name, $this->break) && count($children) == 0)
+					if (in_array($childNode->name, $this->config['break']) && count($children) == 0)
 						continue;
 
 					// add text representation of the child node
@@ -157,9 +194,10 @@ class HTMLSplitter
 			else
 			{
 				$cols[$column][] = $node->node->C14N(false);
+				//$cols[$column][] = '<p><strong>' . $node->height . '</strong></p>';
 				$height += $node->height;
 
-				$header = in_array($node->name, $this->headers);
+				$header = in_array($node->name, $this->config['headers']);
 				if (!$header && $height >= $colHeight)
 				{
 					// next column
@@ -196,6 +234,7 @@ class HTMLSplitter
 
 			if ($node->name == 'ol')
 			{
+				// respect OL numbers
 				$attributes[] = 'start="' . $start . '"';
 			}
 
@@ -218,19 +257,20 @@ class HTMLSplitter
 	}
 
 	/**
+	 * Preprocess one node
 	 *
-	 * @param type $node
+	 * @param DOMNode $node
 	 * @return null|\stdClass
 	 */
 	protected function processNode($node)
 	{
 		$name = $node->nodeName;
 
-		if (in_array($name, $this->skip))
+		if (in_array($name, $this->config['skip']))
 		{
 			return null;
 		}
-		else if (in_array($name, $this->pass))
+		else if (in_array($name, $this->config['pass']))
 		{
 			return $this->getChildArray($node);
 		}
@@ -262,7 +302,10 @@ class HTMLSplitter
 	}
 
 	/**
+	 * Get array of child nodes
 	 *
+	 * @param DOMNode $node
+	 * @return array
 	 */
 	protected function getChildArray($node)
 	{
@@ -290,10 +333,11 @@ class HTMLSplitter
 	}
 
 	/**
+	 * Calculate estimated height of node with subnodes
 	 *
-	 * @param type $nodeArray
-	 * @param type $params
-	 * @return type
+	 * @param array $nodeArray
+	 * @param array $params
+	 * @return integer height value
 	 */
 	protected function calculateHeight($nodeArray, $params)
 	{
@@ -313,18 +357,44 @@ class HTMLSplitter
 				$nodeParams = $params;
 			}
 
-			//
+			// calculate node height
 			if (count($node->children) > 0)
 			{
-				$node->height += $this->calculateHeight($node->children, $nodeParams);
+				// node has children
+				$children_height = $this->calculateHeight($node->children, $nodeParams);
+
+				$node->height += $children_height + ($nodeParams['margin-bottom'] * $this->config['line_height'] * $nodeParams['line-height']);
+			}
+			else if ($node->name == 'img')
+			{
+				// image tag, try to calculate height based on attribute
+				$img_height = intval($node->node->getAttribute('height'));
+				if ($img_height != 0)
+				{
+					$node->height += $img_height;
+				}
+				else
+				{
+					// no height attribute, try to process the image
+					$img_src = $node->node->getAttribute('src');
+				}
 			}
 			else if ($node->name == '#text')
 			{
-				$lines = ceil(strlen($node->text) / $params['line-count']);
+				// text node, height depends on number of chars
+				$lines = ceil(strlen($node->text) / $nodeParams['line-chars']);
 
-				$node->height += ($lines * $params['line-height']) + $params['margin-bottom'];
+				// estimate text height
+				$node->height += ($lines * $this->config['line_height'] * $nodeParams['line-height']);
+			}
+			else
+			{
+				// other nodes, height is calculated by estimated measurements
+				$node->height += (1 * $this->config['line_height'] * $nodeParams['line-height'])
+					+ ($nodeParams['margin-bottom'] * $this->config['line_height'] * $nodeParams['line-height']);
 			}
 
+			// update node height
 			$height += $node->height;
 		}
 

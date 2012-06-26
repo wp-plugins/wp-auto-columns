@@ -6,7 +6,7 @@
   Description: Wrap block of text with shortcode. It will be split into columns. Automagically.
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.4
+  Version: 1.0.5
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -79,7 +79,12 @@ class WPAutoColumns
 	 */
 	public static function on_admin_init()
 	{
-		//register_setting('wp_fetch_page_settings', 'wp_fetch_tm_currency');
+		register_setting('wp_auto_columns', 'wp_auto_columns_line_height');
+
+		register_setting('wp_auto_columns', 'wp_auto_columns_tags_headers');
+		register_setting('wp_auto_columns', 'wp_auto_columns_tags_splittable');
+
+		register_setting('wp_auto_columns', 'wp_auto_columns_height_modifiers');
 	}
 
 	/**
@@ -87,7 +92,7 @@ class WPAutoColumns
 	 */
 	public static function on_admin_menu()
 	{
-		//add_options_page(__('Auto Columns Options', 'theme'), __('Auto Columns', 'theme'), 'manage_options', basename(__FILE__), array('WPAutoColumns', 'on_settings'));
+		add_options_page(__('Auto Columns Options', 'theme'), __('Auto Columns', 'theme'), 'manage_options', basename(__FILE__), array('WPAutoColumns', 'on_settings'));
 	}
 
 	/**
@@ -99,10 +104,19 @@ class WPAutoColumns
 	{
 		extract(shortcode_atts(array('columns' => 2), $atts));
 
-		$splitter = new HTMLSplitter();
+		$config = array(
+			'line_height' => WPAutoColumns::get_option('wp_auto_columns_line_height', 14),
+			'headers' => WPAutoColumns::get_option_string_array('wp_auto_columns_tags_headers'),
+			'splittable' => WPAutoColumns::get_option_string_array('wp_auto_columns_tags_splittable'),
+			'modifiers' => get_option('wp_auto_columns_height_modifiers'),
+		);
 
+		$config = WPAutoColumns::filter_empty($config);
+
+		$splitter = new HTMLSplitter($config);
+
+		// try to split content
 		$col_array = $splitter->split($content, $columns);
-
 		if (!is_array($col_array))
 		{
 			// could not split
@@ -142,10 +156,70 @@ class WPAutoColumns
 
 	/**
 	 *
+	 * @param type $option
+	 * @param type $default
+	 * @return type
+	 */
+	public static function get_option($option, $default = false)
+	{
+		$value = get_option($option, $default);
+		return $value;
+	}
+
+	/**
+	 *
+	 * @param type $option
+	 * @param type $default
+	 * @return type
+	 */
+	public static function get_option_string_array($option, $default = false)
+	{
+		$ret = array();
+
+		$values = explode(',', get_option($option, $default));
+
+		foreach ($values as $v)
+		{
+			$v = trim($v);
+			if ($v != '')
+				$ret[] = $v;
+		}
+
+		return $ret;
+	}
+
+	/**
+	 *
+	 */
+	private static function filter_empty($array)
+	{
+		$ret = array();
+		foreach ($array as $key => $value)
+		{
+			if (is_array($value))
+			{
+				$filtered = WPAutoColumns::filter_empty($value);
+				if (!empty($filtered))
+				{
+					$ret[$key] = $filtered;
+				}
+			}
+			else if ($value != '')
+			{
+				$ret[$key] = $value;
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 *
 	 */
 	public static function on_settings()
 	{
-		echo 'settings';
+		$options = array();
+
+		echo WPAutoColumns::renderTemplate('templates/settings.phtml', $options);
 	}
 
 	/**
@@ -196,6 +270,37 @@ class WPAutoColumns
 		echo '<script type="text/javascript">' . "\n";
 		readfile(plugin_dir_path(__FILE__) . 'js/footer_admin.js');
 		echo '</script>' . "\n";
+	}
+
+	/**
+	 *
+	 * @param type $template_name
+	 * @param type $options
+	 * @return string
+	 */
+	static function renderTemplate($template_name, $options = array())
+	{
+		$template_file = plugin_dir_path(__FILE__) . $template_name;
+
+		if (is_file($template_file))
+		{
+			extract($options);
+
+			ob_start();
+
+			include $template_file;
+
+			$ret = ob_get_contents();
+
+			ob_end_clean();
+		}
+		else
+		{
+			// @todo process error
+			$ret = '<strong>Template ' . $template_file . ' not found!</strong>';
+		}
+
+		return $ret;
 	}
 
 }

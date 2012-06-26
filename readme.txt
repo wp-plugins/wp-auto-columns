@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
 Requires at least: 3.1.0
 Tested up to: 3.3.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 
 Wrap block of text with shortcode. It will be split into columns. Automagically.
 
@@ -56,6 +56,11 @@ No questions yet
 2. Example of shortcode markup
 
 == Changelog ==
+
+= 1.0.5 =
+* Added processing of "height" attribute for IMG tags
+* Fixed behaviour of <br/> tags
+* Settings page for height measurement fine tuning
 
 = 1.0.4 =
 * Added editor toolbar button
