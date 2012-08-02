@@ -6,7 +6,7 @@
   Description: Wrap block of text with shortcode. It will be split into columns. Automagically.
   Author: Spectraweb s.r.o.
   Author URI: http://www.spectraweb.cz
-  Version: 1.0.5
+  Version: 1.0.6
  */
 
 load_plugin_textdomain('wp-auto-columns', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -71,6 +71,7 @@ class WPAutoColumns
 			wp_enqueue_style('auto_columns', plugin_dir_url(__FILE__) . 'css/auto-columns.css', array(), '1.0');
 
 			add_shortcode('auto_columns', array('WPAutoColumns', 'shortcode'));
+			add_shortcode('auto-columns', array('WPAutoColumns', 'shortcode'));
 		}
 	}
 
@@ -79,6 +80,7 @@ class WPAutoColumns
 	 */
 	public static function on_admin_init()
 	{
+		register_setting('wp_auto_columns', 'wp_auto_columns_split_style');
 		register_setting('wp_auto_columns', 'wp_auto_columns_line_height');
 
 		register_setting('wp_auto_columns', 'wp_auto_columns_tags_headers');
@@ -102,7 +104,7 @@ class WPAutoColumns
 	 */
 	public static function shortcode($atts, $content = '')
 	{
-		extract(shortcode_atts(array('columns' => 2), $atts));
+		extract(shortcode_atts(array('columns' => 2, 'style' => ''), $atts));
 
 		$config = array(
 			'line_height' => WPAutoColumns::get_option('wp_auto_columns_line_height', 14),
@@ -123,9 +125,25 @@ class WPAutoColumns
 			return $content;
 		}
 
+		if ($style == '')
+		{
+			$style = get_option('wp_auto_columns_split_style', 'div');
+		}
+
+
 		// construct container
 		$class = array('auto-columns-container', 'columns-' . $columns);
-		$ret = '<div class="' . implode(' ', $class) . '">';
+
+		$ret = '';
+
+		if ($style == 'div')
+		{
+			$ret .= '<div class="' . implode(' ', $class) . '">';
+		}
+		else if ($style == 'table')
+		{
+			$ret .= '<table class="' . implode(' ', $class) . '"><tbody><tr>';
+		}
 
 		for ($i = 0; $i < count($col_array); $i++)
 		{
@@ -139,17 +157,44 @@ class WPAutoColumns
 			{
 				$class[] = 'last-column';
 			}
+
 			// add column
-			$ret .= '<div class="' . implode(' ', $class) . '">';
+			if ($style == 'div')
+			{
+				$ret .= '<div class="' . implode(' ', $class) . '">';
+			}
+			else if ($style == 'table')
+			{
+				$ret .= '<td class="' . implode(' ', $class) . '">';
+			}
+
+			//
 			foreach ($col_array[$i] as $tag)
 			{
 				$ret .= $tag;
 			}
-			$ret .= '</div>';
+
+			if ($style == 'div')
+			{
+				$ret .= '</div>';
+			}
+			else if ($style == 'table')
+			{
+				$ret .= '</td>';
+			}
 		}
 
-		$ret .= '<div class="auto-columns-clear"></div>';
-		$ret .= '</div>';
+		if ($style == 'div')
+		{
+			$ret .= '<div class="auto-columns-clear"></div>';
+			$ret .= '</div>';
+		}
+		else if ($style == 'table')
+		{
+			$ret .= '</tr></tbody></table>';
+		}
+
+
 
 		return $ret;
 	}

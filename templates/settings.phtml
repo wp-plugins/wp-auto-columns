@@ -11,6 +11,24 @@
 		<?php settings_fields('wp_auto_columns'); ?>
 		<table class="form-table">
 			<tr valign="top">
+				<th scope="row"><?php _e('Default split style', 'wp-auto-columns') ?></th>
+				<td>
+					<?php
+					$split_style = get_option('wp_auto_columns_split_style', 'div');
+					$styles = array(
+						'div' => __('Div', 'wp-auto-columns'),
+						'table' => __('Table', 'wp-auto-columns'),
+					);
+					?>
+					<select name="wp_auto_columns_split_style">
+						<?php foreach ($styles as $id => $name) : ?>
+							<option value="<?php echo $id ?>" <?php if ($id == $split_style) echo 'selected="selected"' ?>><?php echo $name ?></option>
+						<?php endforeach; ?>
+					</select>
+				</td>
+			</tr>
+
+			<tr valign="top">
 				<th scope="row"><?php _e('Line height in pixels', 'wp-auto-columns') ?></th>
 				<td>
 					<input type="text" name="wp_auto_columns_line_height"

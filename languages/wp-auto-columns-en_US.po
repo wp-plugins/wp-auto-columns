@@ -2,63 +2,66 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Auto Colums\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-02 17:24+0300\n"
-"PO-Revision-Date: 2012-08-02 17:26+0300\n"
+"POT-Creation-Date: 2012-08-02 17:27+0400\n"
+"PO-Revision-Date: 2012-08-02 17:28+0400\n"
 "Last-Translator: Andrey Ovcharov <andrew.ovcharov@gmail.com>\n"
 "Language-Team: Spectraweb s.r.o. <info@spectraweb.cz>\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_x\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-Language: Russian\n"
-"X-Poedit-Country: RUSSIAN FEDERATION\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../wp-auto-columns.php:32
-msgid "This plugin requires Tidy (<a href=\"http://www.php.net/manual/en/book.tidy.php\" target=\"_blank\">more info</a>)"
-msgstr "Плагин требует установки DOM API (<a href=\"http://www.php.net/manual/ru/dom.setup.php\" target=\"_blank\">подробнее</a>)"
+msgid ""
+"This plugin requires Tidy (<a href=\"http://www.php.net/manual/en/book.tidy."
+"php\" target=\"_blank\">more info</a>)"
+msgstr ""
 
 #: ../wp-auto-columns.php:37
-msgid "This plugin requires DOM API (<a href=\"http://www.php.net/manual/en/book.dom.php\" target=\"_blank\">more info</a>)"
-msgstr "Плагин требует установки DOM API (<a href=\"http://www.php.net/manual/ru/dom.setup.php\" target=\"_blank\">подробнее</a>)"
+msgid ""
+"This plugin requires DOM API (<a href=\"http://www.php.net/manual/en/book."
+"dom.php\" target=\"_blank\">more info</a>)"
+msgstr ""
 
 #: ../wp-auto-columns.php:97
 msgid "Auto Columns Options"
-msgstr "Настройки Auto Columns"
+msgstr ""
 
 #: ../wp-auto-columns.php:97
 msgid "Auto Columns"
-msgstr "Auto Columns"
+msgstr ""
 
 #: ../templates/settings.phtml:2
 msgid "Auto Columns Settings"
-msgstr "Настройки Auto Columns"
+msgstr ""
 
 #: ../templates/settings.phtml:14
 msgid "Default split style"
-msgstr "Способ разбивки по умолчанию"
+msgstr ""
 
 #: ../templates/settings.phtml:19
 msgid "Div"
-msgstr "Div"
+msgstr ""
 
 #: ../templates/settings.phtml:20
 msgid "Table"
-msgstr "Таблица"
+msgstr ""
 
 #: ../templates/settings.phtml:32
 msgid "Line height in pixels"
-msgstr "Высота строки в пикселях"
+msgstr ""
 
 #: ../templates/settings.phtml:41
 msgid "Header tags"
-msgstr "Тэги заголовков"
+msgstr ""
 
 #: ../templates/settings.phtml:46
 msgid "Comma separated list of header tags"
-msgstr "Список тэгов, используемых в качестве заголовков"
+msgstr ""
 
 #: ../templates/settings.phtml:51
 msgid "Splittable tags"
@@ -66,15 +69,15 @@ msgstr ""
 
 #: ../templates/settings.phtml:56
 msgid "Comma separated list of tags allowed to split between columns"
-msgstr "Список тэгов, которые можно разносить по разным колонкам"
+msgstr ""
 
 #: ../templates/settings.phtml:64
 msgid "Splitter fine tuning"
-msgstr "Тонкие настройки разбивщика"
+msgstr ""
 
 #: ../templates/settings.phtml:70
 msgid "Chars in line"
-msgstr "Символов в строке"
+msgstr ""
 
 #: ../templates/settings.phtml:71
 msgid "line-height"
@@ -86,9 +89,8 @@ msgstr ""
 
 #: ../templates/settings.phtml:119
 msgid "These settings are for real experts. Use on your own risk"
-msgstr "Эти настройки требуют опыта. Используйте их на свой риск."
+msgstr ""
 
 #: ../templates/settings.phtml:126
 msgid "Save Changes"
-msgstr "Сохранить изменения"
-
+msgstr ""

@@ -4,17 +4,19 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, columns, layout, magazine, newspaper, pages, posts, multicolumn, automatic
 Requires at least: 3.1.0
 Tested up to: 3.3.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 
 Wrap block of text with shortcode. It will be split into columns. Automagically.
 
 == Description ==
 
-I needed automated, tag-aware column splitter for one of my projects. So I have created one.
+You need to display your articles in magazine or newspaper style. Use this plugin. You don't have
+to change your theme files or add styles - just use "table" splitter.
 
 = Features =
 
 *	fully automatic splitter;
+*	create columns in table or div's;
 *	tag-aware;
 *	splits long paragraphs and unordered lists;
 *	keeps text with headers;
@@ -56,6 +58,9 @@ No questions yet
 2. Example of shortcode markup
 
 == Changelog ==
+
+= 1.0.6 =
+* Added parameter `style="table|div"` to define desired split style.
 
 = 1.0.5 =
 * Added processing of "height" attribute for IMG tags
